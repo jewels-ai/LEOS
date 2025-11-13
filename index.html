@@ -170,7 +170,7 @@
     device-orientation-permission-ui="enabled: false">
 
     <a-assets>
-      <video id="plan1Video" src="plan1.mp4" playsinline preload="auto" loop></video>
+      <video id="plan1Video" src="plan1.mp4" playsinline preload="auto" loop crossorigin="anonymous"></video>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -194,6 +194,7 @@
   </a-scene>
 
   <script>
+    const sceneEl = document.querySelector('a-scene');
     const videoDisplay = document.querySelector('#videoDisplay');
     const videoEl = document.querySelector('#plan1Video');
 
@@ -207,29 +208,58 @@
 
     let isPlaying = false;
 
-    target.addEventListener('targetFound', () => {
+    // Ensure video is usable as a texture
+    videoEl.setAttribute('playsinline', '');
+    videoEl.setAttribute('preload', 'auto');
+    videoEl.setAttribute('crossorigin', 'anonymous');
+
+    // Start MindAR system when scene is ready (defensive)
+    sceneEl.addEventListener('renderstart', () => {
+      const sysKeys = ['mindar-image-system', 'mindar-image'];
+      for (const k of sysKeys) {
+        const sys = sceneEl.systems && sceneEl.systems[k];
+        if (sys && typeof sys.start === 'function') {
+          try { sys.start(); } catch (err) { console.warn('Error starting MindAR system:', err); }
+        }
+      }
+      const comp = sceneEl.querySelector('[mindar-image]');
+      if (comp && comp.components && comp.components['mindar-image'] && typeof comp.components['mindar-image'].start === 'function') {
+        try { comp.components['mindar-image'].start(); } catch (e) { /* ignore */ }
+      }
+    });
+
+    // Show UI when marker found
+    target.addEventListener && target.addEventListener('targetFound', () => {
       [toggleButton, tryJewelsBtn, savingsBtn, locationBtn, whatsappBtn, logo].forEach(el => {
         el.style.opacity = '1';
         el.style.pointerEvents = 'auto';
       });
     });
 
-    target.addEventListener('targetLost', () => {
+    // Hide UI & pause video when marker lost
+    target.addEventListener && target.addEventListener('targetLost', () => {
       [toggleButton, tryJewelsBtn, savingsBtn, locationBtn, whatsappBtn, logo].forEach(el => {
         el.style.opacity = '0';
         el.style.pointerEvents = 'none';
       });
-      videoEl.pause();
+      if (!videoEl.paused) videoEl.pause();
       isPlaying = false;
       toggleButton.textContent = "▶️ Play Video";
     });
 
-    toggleButton.addEventListener('click', () => {
+    // Toggle play/pause with proper handling of play() promise
+    toggleButton.addEventListener('click', async () => {
       if (!isPlaying) {
         videoDisplay.setAttribute('material', 'src', '#plan1Video');
-        videoEl.play();
-        isPlaying = true;
-        toggleButton.textContent = "⏸ Pause Video";
+        try {
+          const playResult = videoEl.play();
+          if (playResult !== undefined) await playResult;
+          isPlaying = true;
+          toggleButton.textContent = "⏸ Pause Video";
+        } catch (err) {
+          console.warn('Video play blocked:', err);
+          alert('Playback blocked by browser. Tap the screen or interact to allow playback.');
+        }
       } else {
         videoEl.pause();
         isPlaying = false;
@@ -237,18 +267,27 @@
       }
     });
 
-    document.addEventListener("contextmenu", (e) => e.preventDefault());
+    // Prevent right-click & show mild alert for blocked actions
+    document.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+    });
     document.addEventListener("keydown", (e) => {
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const meta = isMac ? e.metaKey : e.ctrlKey;
+
       if (
         e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && e.key === "I") ||
-        (e.ctrlKey && e.shiftKey && e.key === "J") ||
-        (e.ctrlKey && e.key === "u") ||
-        (e.ctrlKey && e.shiftKey && e.key === "C")
+        (meta && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) ||
+        (meta && e.key === "u")
       ) {
         e.preventDefault();
         alert("🚫 Action Disabled!");
       }
+    });
+
+    // Pause video on pagehide to avoid background playback
+    window.addEventListener('pagehide', () => {
+      if (!videoEl.paused) videoEl.pause();
     });
   </script>
 </body>

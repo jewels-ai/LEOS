@@ -1,83 +1,54 @@
-<!-- Modern JEWELS-AI UI: compact bottom pill navigation (modern) + AR scene -->
+<!-- Updated index.html with TRY JEWELLERY, SAVINGS PLAN & LOCATION buttons -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>JEWELS-AI — Modern UI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JEWELS-AI</title>
 
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
-    :root{--glass:rgba(6,6,10,0.42);--accent:#e9c46a;--muted:#cfcfcf}
-    html,body{height:100%;margin:0;background:#050507;font-family:Inter, system-ui, 'Segoe UI', Roboto, Poppins, Arial;color:#fff}
+    body { margin: 0; font-family: 'Poppins', sans-serif; background: #000; }
 
-    /* logo */
-    #logo{position:absolute;left:14px;top:14px;width:88px;z-index:250;filter:drop-shadow(0 6px 18px rgba(0,0,0,0.6))}
+    #logo { position: absolute; top: 16px; left: 16px; width: 100px; z-index: 100; }
 
-    /* Pill nav container */
-    .pill-nav{
-      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:240;display:flex;gap:12px;align-items:center;padding:8px;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(0,0,0,0.6);
-      transition:opacity .28s ease, transform .28s ease;opacity:0;pointer-events:none}
-    .pill-visible{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+    /* Main video play/pause button */
+    .button-panel { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); display: none; z-index: 100; }
 
-    .pill-btn{width:56px;height:56px;border-radius:999px;border:none;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;position:relative}
-    .pill-btn-inner{display:flex;flex-direction:column;align-items:center;gap:6px}
-    .pill-label{font-size:12px;color:var(--muted);margin-top:4px;opacity:0;transform:translateY(6px);transition:opacity .18s,transform .18s}
-    .pill-btn:focus .pill-label,.pill-btn:hover .pill-label{opacity:1;transform:translateY(0)}
+    .plan-button { padding: 12px 22px; font-size: 16px; font-weight: 600; border: none; border-radius: 10px; background: rgba(0,0,0,0.55); color: #fff; cursor: pointer; }
+    .plan-button:hover { background: rgba(0,0,0,0.75); }
 
-    /* Play button emphasised */
-    .pill-play{background:linear-gradient(180deg,var(--accent),#d4b85a);color:#111;width:68px;height:68px;box-shadow:0 8px 28px rgba(233,196,106,0.12)}
+    /* New Buttons */
+    #tryJewelsBtn { position: absolute; bottom: 20px; left: 20px; display: none; z-index: 110; }
+    #savingsBtn { position: absolute; bottom: 20px; right: 20px; display: none; z-index: 110; }
+    #locationBtn { position: absolute; top: 20px; right: 20px; display: none; z-index: 110; }
 
-    /* Badge (small) */
-    .badge{position:absolute;top:6px;right:6px;background:#ef476f;color:#fff;padding:2px 6px;border-radius:12px;font-size:11px}
-
-    /* Hidden helper (for a11y) */
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-
-    /* Toast */
-    #toast{position:fixed;top:18px;right:18px;background:rgba(0,0,0,0.6);padding:10px 14px;border-radius:10px;z-index:260;display:none}
-
-    /* Remove VR button */
-    .a-enter-vr-button{display:none !important}
-
-    @media (max-width:480px){ .pill-btn{width:50px;height:50px;font-size:18px} .pill-play{width:60px;height:60px} }
-  </style>
+    #toast { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.18); color: #fff; padding: 8px 12px; border-radius: 8px; display: none; z-index: 200; }
+  .a-enter-vr-button { display: none !important; }
+</style>
 </head>
 <body>
 
-  <img id="logo" src="logo.png" alt="JEWELS-AI" />
+  <img src="logo.png" id="logo">
 
-  <!-- Pill navigation (modern) -->
-  <nav id="pillNav" class="pill-nav" role="navigation" aria-label="AR quick actions">
-    <button class="pill-btn" id="pill-try" aria-label="Try My Jewellery">
-      <div class="pill-btn-inner">🌟<span class="pill-label">Try</span></div>
-    </button>
+  <div class="button-panel" id="planButtons"><button class="plan-button" id="toggleButton">▶️ Play Video</button></div>
 
-    <button class="pill-btn" id="pill-savings" aria-label="Savings Plan">
-      <div class="pill-btn-inner">💰<span class="pill-label">Savings</span></div>
-      <span class="badge">new</span>
-    </button>
+  <!-- New Buttons -->
+  <button class="plan-button" id="tryJewelsBtn" onclick="window.location.href='https://jewels-ai.github.io/Ai_Jewellery_Demo_Ai/'">🌟 Try Our Jewellery</button>
+  <button class="plan-button" id="savingsBtn" onclick="window.open('https://jewels-ai.github.io/Ai_savings-plan_Ai/')">💰 Savings Plan</button>
+  <button class="plan-button" id="locationBtn" onclick="window.open('https://maps.app.goo.gl/U3cmv1V6CV9e95QB8')">📍 Locations</button>
 
-    <button class="pill-btn pill-play" id="pill-play" aria-label="Play Video">
-      <div class="pill-btn-inner">▶️<span class="pill-label">Play</span></div>
-    </button>
+  <div id="toast">Action Disabled</div>
 
-    <button class="pill-btn" id="pill-location" aria-label="Locations">
-      <div class="pill-btn-inner">📍<span class="pill-label">Location</span></div>
-    </button>
-  </nav>
+  <a-scene mindar-image="imageTargetSrc: ./targets.mind" renderer="colorManagement: true; physicallyCorrectLights: true; antialias: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
 
-  <div id="toast" role="status" aria-live="polite"></div>
-
-  <!-- AR Scene -->
-  <a-scene mindar-image="imageTargetSrc: ./targets.mind" renderer="colorManagement: true; physicallyCorrectLights: true; antialias: true" loading-screen="enabled:false" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
     <a-assets>
-      <video id="plan1Video" src="plan1.mp4" playsinline muted preload="auto" loop crossorigin="anonymous"></video>
+      <video id="plan1Video" src="plan1.mp4" playsinline preload="auto" loop crossorigin="anonymous"></video>
     </a-assets>
 
-    <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+    <a-camera look-controls="enabled:false"></a-camera>
 
     <a-entity id="target1" mindar-image-target="targetIndex: 0">
       <a-plane id="videoDisplay" position="0 0 0" width="1" height="0.59" material="src: #plan1Video; shader: flat; side: double"></a-plane>
@@ -85,67 +56,63 @@
   </a-scene>
 
   <script>
-    const pillNav = document.getElementById('pillNav');
-    const pillTry = document.getElementById('pill-try');
-    const pillSavings = document.getElementById('pill-savings');
-    const pillPlay = document.getElementById('pill-play');
-    const pillLocation = document.getElementById('pill-location');
-    const toast = document.getElementById('toast');
+    const sceneEl = document.querySelector('a-scene');
+    const videoEl = document.querySelector('#plan1Video');
+    const videoDisplay = document.querySelector('#videoDisplay');
+    const target = document.querySelector('#target1');
 
-    const videoEl = document.getElementById('plan1Video');
-    const videoDisplay = document.getElementById('videoDisplay');
-    const target = document.getElementById('target1');
+    const buttonsContainer = document.querySelector('#planButtons');
+    const toggleButton = document.querySelector('#toggleButton');
+    const toast = document.querySelector('#toast');
 
-    const tryUrl = 'https://jewels-ai.github.io/Ai_Jewellery_Demo_Ai/';
-    const savingsUrl = 'https://jewels-ai.github.io/Ai_savings-plan_Ai/';
-    const locUrl = 'https://maps.app.goo.gl/U3cmv1V6CV9e95QB8';
+    const tryJewelsBtn = document.querySelector('#tryJewelsBtn');
+    const savingsBtn = document.querySelector('#savingsBtn');
+    const locationBtn = document.querySelector('#locationBtn');
 
-    function showToast(msg, t=1400){ toast.textContent = msg; toast.style.display='block'; setTimeout(()=>toast.style.display='none', t); }
+    let isPlaying = false;
 
-    // Show/hide pill nav when marker found/lost
-    const onFound = ()=>{ pillNav.classList.add('pill-visible'); pillNav.setAttribute('aria-hidden','false'); }
-    const onLost = ()=>{ pillNav.classList.remove('pill-visible'); pillNav.setAttribute('aria-hidden','true'); if(!videoEl.paused) videoEl.pause(); }
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 1200);
+    }
 
-    if(target){ target.addEventListener && target.addEventListener('targetFound', onFound); target.addEventListener && target.addEventListener('targetLost', onLost); }
+    target.addEventListener('targetFound', () => {
+      buttonsContainer.style.display = 'block';
+      tryJewelsBtn.style.display = 'block';
+      savingsBtn.style.display = 'block';
+      locationBtn.style.display = 'block';
+    });
 
-    // Button actions
-    pillTry.addEventListener('click', ()=> location.href = tryUrl);
-    pillSavings.addEventListener('click', ()=> window.open(savingsUrl, '_blank', 'noopener'));
-    pillLocation.addEventListener('click', ()=> window.open(locUrl, '_blank', 'noopener'));
+    target.addEventListener('targetLost', () => {
+      buttonsContainer.style.display = 'none';
+      tryJewelsBtn.style.display = 'none';
+      savingsBtn.style.display = 'none';
+      locationBtn.style.display = 'none';
+      videoEl.pause();
+      toggleButton.textContent = "▶️ Play Video";
+      isPlaying = false;
+    });
 
-    // Play toggle
-    let isPlaying=false;
-    pillPlay.addEventListener('click', async ()=>{
-      if(!isPlaying){
-        videoDisplay.setAttribute('material','src','#plan1Video');
-        try{
-          const p = videoEl.play();
-          if(p !== undefined) await p;
-          isPlaying=true; pillPlay.innerHTML = '<div class="pill-btn-inner">⏸<span class="pill-label">Pause</span></div>';
-          if(videoEl.muted) showToast('🔈 Video is muted. Tap screen to enable sound');
-        }catch(e){ console.warn('play failed', e); showToast('Playback blocked — tap to enable'); }
-      }else{
-        videoEl.pause(); isPlaying=false; pillPlay.innerHTML = '<div class="pill-btn-inner">▶️<span class="pill-label">Play</span></div>';
+    toggleButton.addEventListener('click', () => {
+      if (!isPlaying) {
+        videoDisplay.setAttribute('material', 'src', '#plan1Video');
+        videoEl.play();
+        toggleButton.textContent = "⏸ Pause Video";
+        isPlaying = true;
+      } else {
+        videoEl.pause();
+        toggleButton.textContent = "▶️ Play Video";
+        isPlaying = false;
       }
     });
 
-    // first user gesture to unmute if needed
-    function handleFirstTap(){ if(videoEl && videoEl.muted && !videoEl.paused){ videoEl.muted=false; showToast('Sound enabled'); } document.removeEventListener('click', handleFirstTap); }
-    document.addEventListener('click', handleFirstTap);
-
-    // keyboard accessibility
-    [pillTry, pillSavings, pillPlay, pillLocation].forEach(b=> b.addEventListener('keyup', e=>{ if(e.key==='Enter' || e.key===' ') b.click(); }));
-
-    // defensive MindAR start
-    const sceneEl = document.querySelector('a-scene');
-    sceneEl.addEventListener && sceneEl.addEventListener('renderstart', ()=>{
-      const sys = sceneEl.systems && (sceneEl.systems['mindar-image-system'] || sceneEl.systems['mindar-image']);
-      if(sys && typeof sys.start === 'function') try{ sys.start(); }catch(e){}
+    document.addEventListener("contextmenu", e => { e.preventDefault(); showToast('Action Disabled'); });
+    document.addEventListener("keydown", e => {
+      if (e.key === "F12" || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) || (e.ctrlKey && e.key === "u")) {
+        e.preventDefault(); showToast('Action Disabled');
+      }
     });
-
-    // gentle protections
-    document.addEventListener('contextmenu', e=>{ e.preventDefault(); showToast('Action Disabled'); });
-    document.addEventListener('keydown', e=>{ const isMac = navigator.platform.toUpperCase().indexOf('MAC')>=0; const meta = isMac?e.metaKey:e.ctrlKey; if(e.key==='F12' || (meta && e.shiftKey && (e.key==='I'||e.key==='J'||e.key==='C')) || (meta && e.key==='u')){ e.preventDefault(); showToast('Action Disabled'); } });
   </script>
 </body>
 </html>
